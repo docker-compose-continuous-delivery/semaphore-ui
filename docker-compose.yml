@@ -1,26 +1,22 @@
-version: "3.9"
-
 services:
 
-  hello-world:
-    image: "traefik/whoami"
-    container_name: "simple-service"
+  semaphore:
+    container_name: semaphore
     restart: unless-stopped
+    image: semaphoreui/semaphore:latest
+    env_file:
+      - .semaphore.env
+    environment:
+      SEMAPHORE_DB_DIALECT: bolt
     networks:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.simple-service.rule=Host(`hello-world.${BASE_DOMAIN:-ozeliurs.com}`)"
-      - "traefik.http.routers.simple-service.entrypoints=websecure"
-      - "traefik.http.routers.simple-service.tls=true"
-      - "traefik.http.routers.simple-service.tls.certresolver=cloudflare"
-      - "traefik.http.services.simple-service.loadbalancer.server.port=80"
-    healthcheck:
-      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:80" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
+      - "traefik.http.routers.semaphore.rule=Host(`semaphore.${BASE_DOMAIN:-ozeliurs.com}`)"
+      - "traefik.http.routers.semaphore.entrypoints=websecure"
+      - "traefik.http.routers.semaphore.tls=true"
+      - "traefik.http.routers.semaphore.tls.certresolver=cloudflare"
+      - "traefik.http.services.semaphore.loadbalancer.server.port=3000"
 
 networks:
   traefik:
